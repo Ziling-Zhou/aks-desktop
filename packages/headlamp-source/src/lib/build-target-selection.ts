@@ -21,12 +21,12 @@ function selectBuildTarget<T extends { targets?: unknown }>(
   arch = targetArchitecture()
 ): Omit<T, 'targets'>[] {
   return policies
-    .filter(policy => {
-      if (policy.targets === undefined) return true;
+    .filter(({ targets }) => {
+      if (targets === undefined) return true;
       if (
-        !Array.isArray(policy.targets) ||
-        policy.targets.length === 0 ||
-        !policy.targets.every(
+        !Array.isArray(targets) ||
+        targets.length === 0 ||
+        !targets.every(
           target => typeof target === 'string' && /^(linux|darwin|win32)-(x64|arm64)$/.test(target)
         )
       ) {
@@ -34,7 +34,7 @@ function selectBuildTarget<T extends { targets?: unknown }>(
           'Build targets must be a non-empty array of supported platform-architecture pairs'
         );
       }
-      return policy.targets.includes(`${platform}-${arch}`);
+      return targets.includes(`${platform}-${arch}`);
     })
     .map(({ targets: _targets, ...policy }) => policy);
 }
